@@ -1,0 +1,14 @@
+# Python 가상 환경 및 캐시 파일
+.venv/
+__pycache__/
+*.pyc
+
+# PyCharm 설정 파일
+.idea/
+
+# ❗️매우 중요❗️: 민감 정보 및 데이터 폴더
+.env
+data/
+
+# AVIF 플러그인 캐시 (생성될 수 있음)
+.avif/
