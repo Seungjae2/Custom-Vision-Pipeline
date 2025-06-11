@@ -13,9 +13,19 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
+# --- 여기가 요청에 따라 수정되었습니다 ---
 def sanitize_filename(filename):
-    """파일 이름으로 사용할 수 없는 문자를 제거합니다."""
-    return re.sub(r'[\\/*?:"<>|]', "", filename)
+    """
+    파일 이름으로 사용할 수 없는 문자 및 인코딩 문제를 일으킬 수 있는
+    이모지, 특수 기호 등을 완벽하게 제거합니다.
+    """
+    # 1. 기본적으로 허용되지 않는 파일 시스템 문자 제거
+    sanitized = re.sub(r'[\\/*?:"<>|]', "", filename)
+    # 2. 이모지를 포함한 대부분의 특수 기호를 제거 (한글, 영문, 숫자, 공백, 점, 밑줄, 하이픈만 허용)
+    sanitized = re.sub(r'[^a-zA-Z0-9가-힣\s\._-]', '', sanitized).strip()
+    # 3. 공백이 연속으로 오는 경우 하나로 합침
+    sanitized = re.sub(r'\s+', ' ', sanitized)
+    return sanitized
 
 
 def get_high_quality_thumbnail_url(video_id):
@@ -32,7 +42,7 @@ def get_high_quality_thumbnail_url(video_id):
                 return url
         except requests.RequestException:
             continue
-    return urls_to_try[-1]  # Fallback to hqdefault
+    return urls_to_try[-1]
 
 
 def download_and_verify_image(url, path, title):
@@ -70,12 +80,8 @@ def crawl_youtube_trending():
 
     options = Options()
     options.add_argument("--headless=new")
-
-    # --- 여기가 수정되었습니다 ---
-    options.add_argument("--no-sandbox")  # 샌드박스 모드 비활성화
-    options.add_argument("--disable-dev-shm-usage")  # 공유 메모리 사용 비활성화 (서버 환경에서 안정성 향상)
-    # --------------------------
-
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument(
         "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
     options.add_argument("--window-size=1920,1080")
@@ -125,7 +131,8 @@ def crawl_youtube_trending():
                     video_data.append({
                         "rank": i + 1, "title": title, "link": link, "thumbnail_file": image_filename
                     })
-            except Exception:
+            except Exception as e:
+                print(f"  - 동영상 정보 처리 중 예상치 못한 오류: {e}")
                 continue
 
         if video_data:
