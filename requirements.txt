@@ -1,0 +1,25 @@
+# requirements.txt (프로젝트에 필요한 모든 패키지)
+selenium
+pandas
+requests
+#azure-cognitiveservices-vision-customvision
+schedule
+python-dotenv
+Pillow
+pillow-avif-plugin
+
+#[powershell]
+#pip install selenium pandas requests azure-cognitiveservices-vision-customvision schedule python-dotenv
+
+#패키지 목록 파일 생성하기
+#위의 pip install ... 명령어로 설치가 모두 끝난 후, 터미널에 아래 명령어를 입력하세요.
+
+#[powershell]
+#pip freeze > requirements.txt
+
+#그러면 프로젝트 폴더에 requirements.txt 라는 파일이 생기고, 그 안에는 설치된 모든 패키지 이름과 버전이 기록됩니다.
+#나중에 한 번에 설치하기
+#새로운 환경에서는 아래 명령어 한 줄만 입력하면, requirements.txt에 적힌 모든 패키지가 자동으로 설치됩니다.
+
+#[powershell]
+#pip install -r requirements.txt
